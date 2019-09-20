@@ -40,8 +40,12 @@ export class ReportTabs extends DockPanel {
         const wuid = urlParts2[0];
         this._wu = Workunit.attach({ baseUrl }, wuid);
     }
+    _prevFetch;
     render(callback?: (w: Widget) => void): this {
-        this._wu.fetchResults().then(results => {
+        if (!this._prevFetch) {
+            this._prevFetch = this._wu.fetchResults();
+        }
+        this._prevFetch.then(results => {
             Promise.all(results.filter(isProfileResult).map(result => {
                     return result.fetchRows().then(rows => {
                         return {
